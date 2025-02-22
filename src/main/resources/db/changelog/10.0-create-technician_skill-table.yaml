@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: postgres
+      changes:
+        - sql:
+            sql: |
+              CREATE TABLE project_designer.technician_skill (
+                  skill_id INT REFERENCES project_designer.skill(id) ,
+                  technician_id INT REFERENCES project_designer.technician(id),
+                  PRIMARY KEY (skill_id,  technician_id),
+                  payment DECIMAL(10,2) NOT NULL CHECK (payment >= 0)
+              );

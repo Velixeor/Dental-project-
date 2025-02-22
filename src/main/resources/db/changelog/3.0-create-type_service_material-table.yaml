@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: postgres
+      changes:
+        - sql:
+            sql: |
+              CREATE TABLE project_designer.type_service_material (
+                  type_service_id INT REFERENCES project_designer.type_service(id) ,
+                  material_id INT REFERENCES project_designer.material(id),
+                  PRIMARY KEY (type_service_id,  material_id),
+                  quantity DOUBLE PRECISION NOT NULL CHECK (quantity >= 0)
+              );
