@@ -1,25 +1,23 @@
 spring:
   application:
     name: projectD
-  datasource:
-    url: jdbc:postgresql://localhost:5432/project
-    username: postgres
-    password: 135790
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: none
-    show-sql: true
-    database: postgresql
-  liquibase:
-    change-log: db/changelog/master.yaml
-    user: postgres
-    password: 135790
-    liquibase-schema: project_designer
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
-server:
-  port: 8081
+  config:
+    import: optional:configserver:http://localhost:8888  # Подключаем Config Server
+  cloud:
+    config:
+      fail-fast: true  # Если Config Server недоступен, приложение сразу завершится с ошибкой
+      retry:
+        initial-interval: 2000  # Начальная задержка перед повторной попыткой (2 сек)
+        max-interval: 10000  # Максимальный интервал между попытками (10 сек)
+        max-attempts: 6  # Количество попыток
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/  # Подключаем Eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,refresh  # Доступ к эндпоинтам Spring Actuator

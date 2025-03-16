@@ -12,6 +12,7 @@ import org.example.projectd.repository.TechnicianRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class ProjectService {
     private final CustomerRepository customerRepository;
     private final TechnicianRepository technicianRepository;
 
+    @Transactional
     public Project createProject(ProjectDTO projectDTO) {
         Customer customer = customerRepository.findById(projectDTO.customerId())
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + projectDTO.customerId()));

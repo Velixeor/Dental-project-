@@ -2,6 +2,7 @@ package org.example.projectd.controller;
 
 
 import lombok.RequiredArgsConstructor;
+import org.example.projectd.annotation.Loggable;
 import org.example.projectd.dto.ProjectDTO;
 import org.example.projectd.dto.ProjectPageResponseDTO;
 import org.example.projectd.dto.ProjectResponseDTO;
@@ -30,6 +31,7 @@ public class ProjectController {
         return new ResponseEntity<>(projectService.getProjectById(projectId), HttpStatus.OK);
     }
 
+    @Loggable
     @GetMapping
     public ResponseEntity<ProjectPageResponseDTO> getProjectsPaginated(
             @RequestParam(defaultValue = "1") int page,

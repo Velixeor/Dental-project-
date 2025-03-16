@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ToothService {
     private final ToothRepository toothRepository;
+    private final ServiceService serviceService;
 
     public List<Tooth> saveTeeth(List<ToothDTO> toothDTOs, Project project) {
         if (toothDTOs == null || toothDTOs.isEmpty()) {
@@ -25,7 +26,7 @@ public class ToothService {
         }
 
         List<Tooth> teeth = toothDTOs.stream()
-                .map(dto -> dto.toEntity(project, null))
+                .map(dto -> dto.toEntity(project, serviceService.saveService(dto.serviceDTO())))
                 .toList();
 
         return toothRepository.saveAll(teeth);

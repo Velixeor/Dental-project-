@@ -11,7 +11,7 @@ import org.example.projectd.entity.Tooth;
 public record ToothDTO(
         Integer number,
         String colorForScheme,
-        Integer serviceId
+        ServiceDTO serviceDTO
 ) {
     public Tooth toEntity(Project project, Service service) {
         return new Tooth(null, project, colorForScheme, number, service);
@@ -21,7 +21,7 @@ public record ToothDTO(
         return ToothDTO.builder()
                 .number(tooth.getNumber())
                 .colorForScheme(tooth.getColorForScheme())
-                .serviceId(tooth.getService() != null ? tooth.getService().getId() : null)
+                .serviceDTO(tooth.getService() != null ? ServiceDTO.fromEntity(tooth.getService()) : null)
                 .build();
     }
 }
