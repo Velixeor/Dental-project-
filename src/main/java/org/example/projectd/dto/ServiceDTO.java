@@ -14,7 +14,9 @@ public record ServiceDTO(
         Integer id,
         Double servicePrice,
         Integer typeServiceId,
-        Integer materialId
+        Integer materialId,
+        String materialName,
+        String serviceName
 ) {
     public static ServiceDTO fromEntity(Service service) {
         return ServiceDTO.builder()
@@ -22,6 +24,8 @@ public record ServiceDTO(
                 .servicePrice(service.getServicePrice().doubleValue())
                 .typeServiceId(service.getTypeService() != null ? service.getTypeService().getId() : null)
                 .materialId(service.getMaterial() != null ? service.getMaterial().getId() : null)
+                .serviceName(service.getTypeService().getName())
+                .materialName(service.getMaterial().getName())
                 .build();
     }
 

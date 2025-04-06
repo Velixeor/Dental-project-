@@ -4,10 +4,8 @@ package org.example.projectd.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.projectd.dto.CouplingDTO;
-import org.example.projectd.dto.ToothDTO;
 import org.example.projectd.entity.Coupling;
 import org.example.projectd.entity.Project;
-import org.example.projectd.entity.Tooth;
 import org.example.projectd.repository.CouplingRepository;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +30,8 @@ public class CouplingService {
 
         return couplingRepository.saveAll(couplings);
     }
-    public List<CouplingDTO> getAllCouplingByProjectId(Integer projectId){
+
+    public List<CouplingDTO> getAllCouplingByProjectId(Integer projectId) {
         List<Coupling> couplings = couplingRepository.findByProjectId(projectId);
         return couplings.stream().map(CouplingDTO::fromEntity).collect(Collectors.toList());
     }

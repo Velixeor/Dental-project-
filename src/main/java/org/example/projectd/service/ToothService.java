@@ -26,7 +26,7 @@ public class ToothService {
         }
 
         List<Tooth> teeth = toothDTOs.stream()
-                .map(dto -> dto.toEntity(project, serviceService.saveService(dto.serviceDTO())))
+                .map(dto -> dto.toEntity(project, serviceService.saveServiceAndCreateStage(dto.serviceDTO(),project.getTechnician())))
                 .toList();
 
         return toothRepository.saveAll(teeth);

@@ -4,7 +4,9 @@ package org.example.projectd.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.projectd.dto.ServiceDTO;
+import org.example.projectd.dto.TechnicianDTO;
 import org.example.projectd.entity.Material;
+import org.example.projectd.entity.Technician;
 import org.example.projectd.entity.TypeService;
 import org.example.projectd.repository.MaterialRepository;
 import org.example.projectd.repository.ServiceRepository;
@@ -19,14 +21,16 @@ public class ServiceService {
     private final ServiceRepository serviceRepository;
     private final MaterialRepository materialRepository;
     private final TypeServiceRepository typeServiceRepository;
+    private final StageService stageService;
 
-    public org.example.projectd.entity.Service saveService(ServiceDTO serviceDTO) {
+    public org.example.projectd.entity.Service saveServiceAndCreateStage(ServiceDTO serviceDTO, Technician technician) {
         TypeService typeService = typeServiceRepository.findById(serviceDTO.typeServiceId())
                 .orElseThrow(() -> new RuntimeException("TypeService not found"));
 
         Material material = materialRepository.findById(serviceDTO.materialId())
                 .orElseThrow(() -> new RuntimeException("Material not found"));
-
-        return serviceRepository.save(serviceDTO.toEntity(typeService, material));
+        org.example.projectd.entity.Service service=serviceRepository.save(serviceDTO.toEntity(typeService, material));
+        stageService.saveAllStages(service,technician);
+        return service;
     }
 }

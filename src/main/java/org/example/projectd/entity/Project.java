@@ -31,7 +31,7 @@ public class Project {
 
     private String comment;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
@@ -48,7 +48,7 @@ public class Project {
     @Enumerated(EnumType.STRING)
     private TeethColor teethColor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "technician_id")
     private Technician technician;
 }
