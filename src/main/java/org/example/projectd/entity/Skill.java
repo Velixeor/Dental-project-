@@ -7,27 +7,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
-
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "technician", schema = "project_designer")
-public class Technician {
+@Table(name = "skill", schema = "project_designer")
+public class Skill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
-
-    @Column(name = "is_older", nullable = false)
-    private Boolean isOlder = false;
-
-    private Integer userId;
-
 }

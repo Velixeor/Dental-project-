@@ -11,10 +11,12 @@ import org.example.projectd.repository.ProjectRepository;
 import org.example.projectd.repository.TechnicianRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -52,5 +54,29 @@ public class ProjectService {
         return new ProjectPageResponseDTO(shortProjectDTOs, projectsPage.getTotalPages());
     }
 
+    @Transactional(readOnly = true)
+    public ProjectPageResponseDTO searchProjects(String query, List<String> filters, int page, int size) {
+        Specification<Project> spec = buildSearchSpecification(query, filters);
+        Page<Project> resultPage = fetchProjectsPage(spec, page, size);
+        List<ShortProjectDTO> shortProjects = mapToShortDto(resultPage);
+        return buildPageResponse(shortProjects, resultPage.getTotalPages());
+    }
+    private Specification<Project> buildSearchSpecification(String query, List<String> filters) {
+        return ProjectSpecifications.searchByFields(query, filters);
+    }
+
+    private Page<Project> fetchProjectsPage(Specification<Project> spec, int page, int size) {
+        return projectRepository.findAll(spec, PageRequest.of(page - 1, size));
+    }
+
+    private List<ShortProjectDTO> mapToShortDto(Page<Project> projects) {
+        return projects.getContent().stream()
+                .map(ShortProjectDTO::fromEntity)
+                .toList();
+    }
+
+    private ProjectPageResponseDTO buildPageResponse(List<ShortProjectDTO> projects, int totalPages) {
+        return new ProjectPageResponseDTO(projects, totalPages);
+    }
 
 }

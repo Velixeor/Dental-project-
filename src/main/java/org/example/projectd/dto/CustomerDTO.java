@@ -20,4 +20,11 @@ public record CustomerDTO(
                 .address(customer.getAddress())
                 .build();
     }
+    public Customer toEntity() {
+        Customer customer = new Customer();
+        customer.setName(this.name());
+        customer.setPhone(this.phone());
+        customer.setAddress(this.address());
+        return customer;
+    }
 }

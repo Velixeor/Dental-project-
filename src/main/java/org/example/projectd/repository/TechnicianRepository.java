@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TechnicianRepository extends JpaRepository<Technician, Integer> {
-
+ Technician findByUserId(Integer userid);
 }

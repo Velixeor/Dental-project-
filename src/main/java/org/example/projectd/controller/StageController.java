@@ -1,0 +1,35 @@
+package org.example.projectd.controller;
+
+
+import lombok.RequiredArgsConstructor;
+import org.example.projectd.dto.StageDTO;
+import org.example.projectd.service.StageService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+
+@RestController
+@RequestMapping("/api/v1/project/stage")
+@RequiredArgsConstructor
+public class StageController {
+    private final StageService stageService;
+
+    @GetMapping
+    public ResponseEntity<List<StageDTO>> getStagesForTechnician(
+            @RequestHeader("X-User-Id") String userId
+    ) {
+        List<StageDTO> stages = stageService.getStagesByUserId(Integer.parseInt(userId));
+        return ResponseEntity.ok(stages);
+    }
+
+    @PutMapping
+    public ResponseEntity<Void> updateStage(
+            @RequestBody StageDTO stageDTO
+    ) {
+        stageService.updateStage(stageDTO);
+        return ResponseEntity.ok().build();
+    }
+
+}

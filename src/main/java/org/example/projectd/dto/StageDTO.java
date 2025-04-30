@@ -7,8 +7,8 @@ import org.example.projectd.entity.Stage;
 import org.example.projectd.entity.Technician;
 
 
-    @Builder
-    public record StageDTO(
+@Builder
+public record StageDTO(
             Integer id,
             String name,
             String comment,
@@ -16,8 +16,8 @@ import org.example.projectd.entity.Technician;
             Boolean sentForQualityControl,
             Integer serviceId,
             Integer technicianId
-    ) {
-        public static StageDTO fromEntity(Stage stage) {
+) {
+    public static StageDTO fromEntity(Stage stage) {
             return StageDTO.builder()
                     .id(stage.getId())
                     .name(stage.getName())
@@ -27,9 +27,8 @@ import org.example.projectd.entity.Technician;
                     .serviceId(stage.getService() != null ? stage.getService().getId() : null)
                     .technicianId(stage.getTechnician() != null ? stage.getTechnician().getId() : null)
                     .build();
-        }
-
-        public Stage toEntity(Service service, Technician technician) {
+    }
+    public Stage toEntity(Service service, Technician technician) {
             Stage stage = new Stage();
             stage.setId(id);
             stage.setName(name);
@@ -39,5 +38,5 @@ import org.example.projectd.entity.Technician;
             stage.setService(service);
             stage.setTechnician(technician);
             return stage;
-        }
     }
+}

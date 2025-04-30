@@ -12,15 +12,18 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/v1/customer")
+@RequestMapping("/api/v1/project/customer")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class CustomerController {
     private final CustomerService customerService;
-
 
     @GetMapping("")
     public ResponseEntity<List<CustomerDTO>> getCustomer() {
         return new ResponseEntity<>(customerService.getCustomers(), HttpStatus.OK);
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDTO customerDTO) {
+        return new ResponseEntity<>(customerService.createCustomer(customerDTO), HttpStatus.CREATED);
     }
 }

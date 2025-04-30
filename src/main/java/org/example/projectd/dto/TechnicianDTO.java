@@ -18,4 +18,10 @@ public record TechnicianDTO(
                 .isOlder(technician.getIsOlder())
                 .build();
     }
+    public static Technician toEntity(TechnicianDTO dto) {
+        Technician technician=new Technician();
+        technician.setName(dto.name());
+        technician.setIsOlder(dto.isOlder());
+        return technician;
+    }
 }

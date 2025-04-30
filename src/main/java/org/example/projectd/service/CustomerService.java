@@ -4,6 +4,7 @@ package org.example.projectd.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.projectd.dto.CustomerDTO;
+import org.example.projectd.entity.Customer;
 import org.example.projectd.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
 
@@ -20,5 +21,11 @@ public class CustomerService {
         return customerRepository.findAll().stream()
                 .map(CustomerDTO::fromEntity)
                 .toList();
+    }
+
+    public CustomerDTO createCustomer(CustomerDTO customerDTO) {
+        Customer customer = customerDTO.toEntity();
+        Customer savedCustomer = customerRepository.save(customer);
+        return CustomerDTO.fromEntity(savedCustomer);
     }
 }
