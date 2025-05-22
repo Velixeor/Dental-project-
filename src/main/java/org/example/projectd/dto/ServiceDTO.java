@@ -31,7 +31,7 @@ public record ServiceDTO(
 
     public Service toEntity(TypeService typeService, Material material) {
         return new Service(
-                id,
+                null,
                 typeService,
                 material,
                 BigDecimal.valueOf(servicePrice)

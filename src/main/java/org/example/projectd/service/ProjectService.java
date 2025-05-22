@@ -30,12 +30,12 @@ public class ProjectService {
     private final TechnicianRepository technicianRepository;
 
     @Transactional
-    public Project createProject(ProjectDTO projectDTO) {
+    public Project createProject(ProjectDTO projectDTO, Integer companyId) {
         Customer customer = customerRepository.findById(projectDTO.customerId())
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + projectDTO.customerId()));
         Technician technician = technicianRepository.findById(projectDTO.technicianId())
                 .orElseThrow(() -> new EntityNotFoundException("Technician not found with id: " + projectDTO.technicianId()));
-        Project project = projectRepository.save(projectDTO.toEntity(customer, technician));
+        Project project = projectRepository.save(projectDTO.toEntity(customer, technician,companyId));
         toothService.saveTeeth(projectDTO.teeth(), project);
         couplingService.saveCouplings(projectDTO.couplings(), project);
         return project;

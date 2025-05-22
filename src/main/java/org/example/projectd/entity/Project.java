@@ -51,4 +51,7 @@ public class Project {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "technician_id")
     private Technician technician;
+
+    @Column(name = "company_id")
+    private Integer companyId;
 }

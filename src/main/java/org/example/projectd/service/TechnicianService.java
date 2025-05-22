@@ -9,11 +9,15 @@ import org.example.projectd.dto.TechnicianDTO;
 import org.example.projectd.entity.Skill;
 import org.example.projectd.entity.Technician;
 import org.example.projectd.entity.TechnicianSkill;
+import org.example.projectd.entity.UserOutboxEvent;
 import org.example.projectd.repository.TechnicianRepository;
+import org.example.projectd.repository.UserOutboxEventRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -23,6 +27,7 @@ public class TechnicianService {
     private final TechnicianRepository technicianRepository;
     private final SkillService skillService;
     private final TechnicianSkillService technicianSkillService;
+    private final UserOutboxEventRepository userOutboxEventRepository;
 
     public List<TechnicianDTO> getTechnician() {
         return technicianRepository.findAll().stream()
@@ -40,8 +45,25 @@ public class TechnicianService {
         List<Skill> skills = fetchSkillsFromDTO(technicianDTO);
         List<TechnicianSkill> technicianSkills = technicianDTO.toTechnicianSkills(technician, skills);
         technicianSkillService.saveAllTechnicianSkills(technicianSkills);
+        saveUserOutboxEvent(technicianDTO, technician);
         return TechnicianDTO.fromEntity(technician);
     }
+
+    private void saveUserOutboxEvent(TechnicianCreateDTO dto, Technician technician) {
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("name", technician.getName());
+        payload.put("email", dto.mail());
+        payload.put("password", dto.password());
+
+        UserOutboxEvent event = UserOutboxEvent.builder()
+                .eventType("USER_CREATE")
+                .externalKey(dto.mail())
+                .payload(payload)
+                .build();
+
+        userOutboxEventRepository.save(event);
+    }
+
 
     private Technician saveTechnicianEntity(TechnicianCreateDTO dto) {
         Technician technician = dto.toEntity();

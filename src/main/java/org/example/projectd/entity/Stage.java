@@ -38,4 +38,7 @@ public class Stage {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "technician_id")
     private Technician technician;
+
+    @Column(name = "execution_step_number")
+    private Integer executionStepNumber;
 }

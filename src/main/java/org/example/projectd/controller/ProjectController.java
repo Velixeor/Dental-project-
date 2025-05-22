@@ -24,8 +24,10 @@ public class ProjectController {
     private final ProjectService projectService;
 
     @PostMapping("/create")
-    public ResponseEntity<Project> createProject(@RequestBody ProjectDTO projectDTO) {
-        return new ResponseEntity<>(projectService.createProject(projectDTO), HttpStatus.CREATED);
+    public ResponseEntity<Project> createProject(@RequestBody ProjectDTO projectDTO,
+                                                 @RequestHeader("X-Company-Id") String companyId) {
+
+        return new ResponseEntity<>(projectService.createProject(projectDTO,Integer.parseInt(companyId)), HttpStatus.CREATED);
     }
 
     @GetMapping("/{projectId}")

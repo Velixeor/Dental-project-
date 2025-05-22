@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 public record TechnicianCreateDTO(
         String name,
         Boolean isOlder,
+        String mail,
+        String password,
         List<SkillPaymentDTO> skills
 ) {
     public Technician toEntity() {

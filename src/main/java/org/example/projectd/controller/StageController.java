@@ -17,19 +17,25 @@ public class StageController {
     private final StageService stageService;
 
     @GetMapping
-    public ResponseEntity<List<StageDTO>> getStagesForTechnician(
+    public ResponseEntity<List<StageDTO>> getStagesForUser(
             @RequestHeader("X-User-Id") String userId
     ) {
         List<StageDTO> stages = stageService.getStagesByUserId(Integer.parseInt(userId));
         return ResponseEntity.ok(stages);
     }
 
+    @GetMapping("/pending")
+    public ResponseEntity<List<StageDTO>> getPendingStages() {
+        List<StageDTO> pendingStages = stageService.getPendingStages();
+        return ResponseEntity.ok(pendingStages);
+    }
+
     @PutMapping
-    public ResponseEntity<Void> updateStage(
+    public ResponseEntity<StageDTO> updateStage(
             @RequestBody StageDTO stageDTO
     ) {
-        stageService.updateStage(stageDTO);
-        return ResponseEntity.ok().build();
+        StageDTO updatedStage = stageService.updateStage(stageDTO);
+        return ResponseEntity.ok(updatedStage);
     }
 
 }

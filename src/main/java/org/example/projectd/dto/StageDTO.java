@@ -15,7 +15,8 @@ public record StageDTO(
             Boolean confirmed,
             Boolean sentForQualityControl,
             Integer serviceId,
-            Integer technicianId
+            Integer technicianId,
+            Integer executionStepNumber
 ) {
     public static StageDTO fromEntity(Stage stage) {
             return StageDTO.builder()
@@ -26,17 +27,19 @@ public record StageDTO(
                     .sentForQualityControl(stage.getSentForQualityControl())
                     .serviceId(stage.getService() != null ? stage.getService().getId() : null)
                     .technicianId(stage.getTechnician() != null ? stage.getTechnician().getId() : null)
+                    .executionStepNumber(stage.getExecutionStepNumber())
                     .build();
     }
     public Stage toEntity(Service service, Technician technician) {
             Stage stage = new Stage();
-            stage.setId(id);
+            stage.setId(null);
             stage.setName(name);
             stage.setComment(comment);
             stage.setConfirmed(confirmed != null ? confirmed : false);
             stage.setSentForQualityControl(sentForQualityControl != null ? sentForQualityControl : false);
             stage.setService(service);
             stage.setTechnician(technician);
+            stage.setExecutionStepNumber(executionStepNumber);
             return stage;
     }
 }

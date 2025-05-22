@@ -12,7 +12,8 @@ import org.example.projectd.repository.PatternStageRepository;
 import org.example.projectd.repository.StageRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -22,6 +23,16 @@ public class StageService {
     private final StageRepository stageRepository;
     private final PatternStageRepository patternStageRepository;
     private final TechnicianService technicianService;
+
+    record ProjectServiceKey(Integer serviceId, Integer projectId) {}
+
+    public List<StageDTO> getPendingStages() {
+        return stageRepository.findPendingStages()
+                .stream()
+                .map(StageDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
     public void saveAllStages(org.example.projectd.entity.Service service, Technician technician) {
         List<PatternStage> patternStages = patternStageRepository.findByTypeService(service.getTypeService());
 
@@ -48,23 +59,84 @@ public class StageService {
                 .sentForQualityControl(false)
                 .serviceId(service.getId())
                 .technicianId(technician.getId())
+                .executionStepNumber(pattern.getExecutionStepNumber())
                 .build();
 
         return stageDTO.toEntity(service, technician);
     }
 
     public List<StageDTO> getStagesByUserId(Integer userId) {
-        List<Stage> stages = stageRepository.findByTechnicianId(technicianService.getTechnicianByUserID(userId).getId());
-        return stages.stream()
+        Integer technicianId = technicianService.getTechnicianByUserID(userId).getId();
+        List<Stage> technicianStages = stageRepository.findByTechnicianId(technicianId);
+
+        Map<Integer, Integer> stageToProjectIdMap = stageRepository.findStageIdToProjectIdByTechnician(technicianId).stream()
+                .collect(Collectors.toMap(
+                        row -> (Integer) row[0],
+                        row -> (Integer) row[1],
+                        (existing, replacement) -> existing
+                ));
+
+        Map<ProjectServiceKey, List<Stage>> stagesByProjectService = groupStagesByProjectAndService(technicianStages, stageToProjectIdMap);
+
+        List<Stage> nextStages = stagesByProjectService.values().stream()
+                .map(this::findNextStageForService)
+                .filter(Objects::nonNull)
+                .toList();
+
+        return nextStages.stream()
                 .map(StageDTO::fromEntity)
                 .toList();
     }
 
-    public void updateStage(StageDTO dto) {
+    private Map<ProjectServiceKey, List<Stage>> groupStagesByProjectAndService(
+            List<Stage> stages,
+            Map<Integer, Integer> stageToProjectIdMap) {
+
+        return stages.stream()
+                .map(stage -> {
+                    Integer stageId = stage.getId();
+                    Integer projectId = stageToProjectIdMap.get(stageId);
+                    return new AbstractMap.SimpleEntry<>(
+                            new ProjectServiceKey(stage.getService().getId(), projectId),
+                            stage
+                    );
+                })
+                .filter(entry -> entry.getKey().projectId() != null)
+                .collect(Collectors.groupingBy(
+                        Map.Entry::getKey,
+                        Collectors.mapping(Map.Entry::getValue, Collectors.toList())
+                ));
+    }
+
+    private Stage findNextStageForService(List<Stage> stages) {
+        stages.sort(Comparator.comparing(Stage::getExecutionStepNumber));
+        for (int i = 0; i < stages.size(); i++) {
+            Stage current = stages.get(i);
+            if (!current.getConfirmed() && allPreviousStagesConfirmed(stages, i)) {
+                return current;
+            }
+        }
+        return null;
+    }
+
+    private boolean allPreviousStagesConfirmed(List<Stage> stages, int index) {
+        for (int j = 0; j < index; j++) {
+            if (!stages.get(j).getConfirmed()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public StageDTO updateStage(StageDTO dto) {
         Stage stage = stageRepository.findById(dto.id())
                 .orElseThrow(() -> new EntityNotFoundException("Stage not found"));
         stage.setComment(dto.comment());
         stage.setSentForQualityControl(true);
+        stage.setConfirmed(dto.confirmed());
         stageRepository.save(stage);
+        return  StageDTO.fromEntity(stageRepository.save(stage));
     }
+
+
 }

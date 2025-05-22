@@ -16,5 +16,6 @@ databaseChangeLog:
                   status VARCHAR(20) CHECK (status IN ('NEW', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED')),  
                   is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
                   teeth_color VARCHAR(20) CHECK (teeth_color IN ('WHITE', 'YELLOW', 'GRAY')),  
-                  technician_id INT REFERENCES project_designer.technician(id) ON DELETE SET NULL 
+                  technician_id INT REFERENCES project_designer.technician(id) ON DELETE SET NULL,
+                  company_id INT
               );

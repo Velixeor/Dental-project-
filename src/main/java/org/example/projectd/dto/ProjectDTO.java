@@ -23,7 +23,7 @@ public record ProjectDTO(
         List<CouplingDTO> couplings
 
 ) {
-    public Project toEntity(Customer customer, Technician technician) {
+    public Project toEntity(Customer customer, Technician technician,Integer companyId) {
         return new Project(
                 null,
                 LocalDateTime.now(),
@@ -35,7 +35,8 @@ public record ProjectDTO(
                 ProjectStatus.valueOf(status),
                 isDeleted,
                 TeethColor.valueOf(teethColor),
-                technician
+                technician,
+                companyId
         );
     }
 }

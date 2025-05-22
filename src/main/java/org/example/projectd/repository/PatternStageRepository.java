@@ -12,4 +12,5 @@ import java.util.List;
 @Repository
 public interface PatternStageRepository extends JpaRepository<PatternStage, Integer> {
     List<PatternStage> findByTypeService(TypeService typeService);
+    List<PatternStage> findByTypeServiceIdOrderByExecutionStepNumber(Integer typeServiceId);
 }

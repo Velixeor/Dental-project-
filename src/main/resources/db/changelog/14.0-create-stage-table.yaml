@@ -12,5 +12,6 @@ databaseChangeLog:
                   confirmed BOOLEAN NOT NULL DEFAULT FALSE,  
                   service_id INT REFERENCES project_designer.service(id) ON DELETE SET NULL,  
                   sent_for_quality_control BOOLEAN NOT NULL DEFAULT FALSE, 
-                  technician_id INT REFERENCES project_designer.technician(id) ON DELETE SET NULL
+                  technician_id INT REFERENCES project_designer.technician(id) ON DELETE SET NULL,
+                  execution_step_number INT
               );
