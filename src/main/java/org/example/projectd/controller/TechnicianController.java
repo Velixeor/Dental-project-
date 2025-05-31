@@ -24,7 +24,7 @@ public class TechnicianController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<TechnicianDTO> createTechnician(@RequestBody TechnicianCreateDTO technicianCreateDTO) {
-        return new ResponseEntity<>(technicianService.createTechnician(technicianCreateDTO), HttpStatus.CREATED);
+    public ResponseEntity<TechnicianDTO> createTechnician(@RequestBody TechnicianCreateDTO technicianCreateDTO,@RequestHeader("X-Company-Id") String companyId) {
+        return new ResponseEntity<>(technicianService.createTechnician(technicianCreateDTO,Long.parseLong(companyId)), HttpStatus.CREATED);
     }
 }

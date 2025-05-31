@@ -16,7 +16,7 @@ import java.util.Map;
 public class UserSenderService {
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private static final String TARGET_URL = "http://other-microservice/api/users";
+    private static final String TARGET_URL = "http://other-microservice/api/users";//////////////////////////////////////////////
 
     public Integer send(UserOutboxEvent event) {
         Map<String, Object> payload = event.getPayload();

@@ -15,6 +15,7 @@ import org.example.projectd.repository.UserOutboxEventRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,25 +41,29 @@ public class TechnicianService {
     }
 
     @Transactional
-    public TechnicianDTO createTechnician(TechnicianCreateDTO technicianDTO) {
+    public TechnicianDTO createTechnician(TechnicianCreateDTO technicianDTO, Long companyId) {
         Technician technician = saveTechnicianEntity(technicianDTO);
         List<Skill> skills = fetchSkillsFromDTO(technicianDTO);
         List<TechnicianSkill> technicianSkills = technicianDTO.toTechnicianSkills(technician, skills);
         technicianSkillService.saveAllTechnicianSkills(technicianSkills);
-        saveUserOutboxEvent(technicianDTO, technician);
+        saveUserOutboxEvent(technicianDTO, technician,companyId);
         return TechnicianDTO.fromEntity(technician);
     }
 
-    private void saveUserOutboxEvent(TechnicianCreateDTO dto, Technician technician) {
+    private void saveUserOutboxEvent(TechnicianCreateDTO dto, Technician technician,Long companyID) {
         Map<String, Object> payload = new HashMap<>();
         payload.put("name", technician.getName());
         payload.put("email", dto.mail());
         payload.put("password", dto.password());
 
+        payload.put("companyId",companyID);
+        payload.put("roleId", 1);
+
         UserOutboxEvent event = UserOutboxEvent.builder()
                 .eventType("USER_CREATE")
-                .externalKey(dto.mail())
+                .externalKey(String.valueOf(technician.getId()))
                 .payload(payload)
+                .createdAt(LocalDateTime.now())
                 .build();
 
         userOutboxEventRepository.save(event);

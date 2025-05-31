@@ -4,6 +4,7 @@ package org.example.projectd.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.projectd.entity.UserOutboxEvent;
+import org.example.projectd.repository.TechnicianRepository;
 import org.example.projectd.repository.UserOutboxEventRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ import java.util.List;
 public class UserOutboxScheduler {
     private final UserOutboxEventRepository userOutboxEventRepository;
     private final UserSenderService userSenderService;
+    private final TechnicianRepository technicianRepository;
 
     @Scheduled(fixedDelay = 10000)
     public void processUserOutbox() {
@@ -28,6 +30,8 @@ public class UserOutboxScheduler {
                 Integer userId = userSenderService.send(event);
                 event.setProcessedAt(LocalDateTime.now());
                 userOutboxEventRepository.save(event);
+                Long technicianId = Long.parseLong(event.getExternalKey());
+                technicianRepository.updateUserIdByTechnicianId(userId, technicianId);
             } catch (Exception e) {
                 log.error("Ошибка при отправке user outbox event: {}", event.getId(), e);
             }
