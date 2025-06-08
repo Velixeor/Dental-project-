@@ -48,15 +48,22 @@ public class ProjectService {
                 couplingService.getAllCouplingByProjectId(projectId), toothService.getAllTeethByProjectId(projectId));
     }
 
-    public ProjectPageResponseDTO getProjects(int page, int size){
-        Page<Project> projectsPage = projectRepository.findAll(PageRequest.of(page - 1, size));
-        List<ShortProjectDTO> shortProjectDTOs = projectsPage.map(ShortProjectDTO::fromEntity).getContent();
+    public ProjectPageResponseDTO getProjects(Long companyId, int page, int size) {
+        Page<Project> projectsPage = projectRepository.findAllByCompanyId(
+                companyId.intValue(), PageRequest.of(page - 1, size)
+        );
+        List<ShortProjectDTO> shortProjectDTOs = projectsPage
+                .map(ShortProjectDTO::fromEntity)
+                .getContent();
+
         return new ProjectPageResponseDTO(shortProjectDTOs, projectsPage.getTotalPages());
     }
 
     @Transactional(readOnly = true)
-    public ProjectPageResponseDTO searchProjects(String query, List<String> filters, int page, int size) {
-        Specification<Project> spec = buildSearchSpecification(query, filters);
+    public ProjectPageResponseDTO searchProjects(Long companyId, String query, List<String> filters, int page, int size) {
+        Specification<Project> spec = buildSearchSpecification(query, filters)
+                .and((root, query1, cb) -> cb.equal(root.get("company").get("id"), companyId));
+
         Page<Project> resultPage = fetchProjectsPage(spec, page, size);
         List<ShortProjectDTO> shortProjects = mapToShortDto(resultPage);
         return buildPageResponse(shortProjects, resultPage.getTotalPages());
@@ -77,6 +84,20 @@ public class ProjectService {
 
     private ProjectPageResponseDTO buildPageResponse(List<ShortProjectDTO> projects, int totalPages) {
         return new ProjectPageResponseDTO(projects, totalPages);
+    }
+
+    public Project update(Project project) {
+        if (project.getId() == null) {
+            throw new IllegalArgumentException("Cannot update project without ID");
+        }
+
+        Project existing = projectRepository.findById(project.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Project not found"));
+
+        existing.setStatus(project.getStatus());
+        existing.setDateCompleted(project.getDateCompleted());
+
+        return projectRepository.save(existing);
     }
 
 }

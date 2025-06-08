@@ -17,13 +17,17 @@ import java.util.List;
 public class CustomerController {
     private final CustomerService customerService;
 
-    @GetMapping("")
-    public ResponseEntity<List<CustomerDTO>> getCustomer() {
-        return new ResponseEntity<>(customerService.getCustomers(), HttpStatus.OK);
+    @GetMapping
+    public ResponseEntity<List<CustomerDTO>> getCustomer(
+            @RequestHeader("X-Company-Id") String companyId) {
+        return new ResponseEntity<>(
+                customerService.getCustomers(Long.parseLong(companyId)),
+                HttpStatus.OK
+        );
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDTO customerDTO) {
-        return new ResponseEntity<>(customerService.createCustomer(customerDTO), HttpStatus.CREATED);
+    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDTO customerDTO,@RequestHeader("X-Company-Id") String companyId) {
+        return new ResponseEntity<>(customerService.createCustomer(customerDTO,Long.parseLong(companyId)), HttpStatus.CREATED);
     }
 }

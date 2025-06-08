@@ -35,21 +35,22 @@ public class ProjectController {
         return new ResponseEntity<>(projectService.getProjectById(projectId), HttpStatus.OK);
     }
 
-    @Loggable
     @GetMapping
     public ResponseEntity<ProjectPageResponseDTO> getProjectsPaginated(
+            @RequestHeader("X-Company-Id") String companyId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(projectService.getProjects(page, size));
+        return ResponseEntity.ok(projectService.getProjects(Long.parseLong(companyId), page, size));
     }
 
     @GetMapping("/search")
     public ResponseEntity<ProjectPageResponseDTO> searchProjectsPaginated(
+            @RequestHeader("X-Company-Id") String companyId,
             @RequestParam String query,
             @RequestParam List<String> filter,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok(projectService.searchProjects(query, filter, page, size));
+        return ResponseEntity.ok(projectService.searchProjects(Long.parseLong(companyId), query, filter, page, size));
     }
 }

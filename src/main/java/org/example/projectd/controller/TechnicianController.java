@@ -18,9 +18,13 @@ import java.util.List;
 public class TechnicianController {
     private final TechnicianService technicianService;
 
-    @GetMapping("")
-    public ResponseEntity<List<TechnicianDTO>> getTechnician() {
-        return new ResponseEntity<>(technicianService.getTechnician(), HttpStatus.OK);
+    @GetMapping
+    public ResponseEntity<List<TechnicianDTO>> getTechnician(
+            @RequestHeader("X-Company-Id") String companyId) {
+        return new ResponseEntity<>(
+                technicianService.getTechnician(Long.parseLong(companyId)),
+                HttpStatus.OK
+        );
     }
 
     @PostMapping("/create")

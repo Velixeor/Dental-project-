@@ -24,20 +24,28 @@ public class StageService {
     private final PatternStageRepository patternStageRepository;
     private final TechnicianService technicianService;
 
-    record ProjectServiceKey(Integer serviceId, Integer projectId) {}
 
-    public List<StageDTO> getPendingStages() {
-        return stageRepository.findPendingStages()
+    record ProjectServiceKey(Integer serviceId, Integer projectId) {
+    }
+
+    public List<StageDTO> getPendingStages(Long companyId) {
+        return stageRepository.findPendingStagesByCompanyId(companyId)
                 .stream()
                 .map(StageDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 
     public void saveAllStages(org.example.projectd.entity.Service service, Technician technician) {
-        List<PatternStage> patternStages = patternStageRepository.findByTypeService(service.getTypeService());
+
+        List<PatternStage> patternStages = patternStageRepository.findByTypeServiceIdAndCompanyId(
+                service.getTypeService().getId(),
+                technician.getCompanyId().intValue()
+        );
 
         if (patternStages.isEmpty()) {
-            log.warn("No pattern stages found for service type: {}", service.getTypeService().getName());
+            log.warn("No pattern stages found for type '{}' ",
+                    service.getTypeService().getName()
+                    );
             return;
         }
 
@@ -134,8 +142,12 @@ public class StageService {
         stage.setComment(dto.comment());
         stage.setSentForQualityControl(true);
         stage.setConfirmed(dto.confirmed());
-        stageRepository.save(stage);
-        return  StageDTO.fromEntity(stageRepository.save(stage));
+        Stage updatestage = stageRepository.save(stage);
+        return StageDTO.fromEntity(updatestage);
+    }
+
+    public List<Stage> getByServiceId(Integer serviceId) {
+        return stageRepository.findByService_Id(serviceId);
     }
 
 

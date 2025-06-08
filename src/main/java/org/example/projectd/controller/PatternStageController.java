@@ -18,13 +18,19 @@ public class PatternStageController {
     private final PatternStageService patternStageService;
 
     @GetMapping("/by-type/{typeServiceId}")
-    public ResponseEntity<List<PatternStageDTO>> getStagesByTypeService(@PathVariable Integer typeServiceId) {
-        return new ResponseEntity<>(patternStageService.getPatternStagesByTypeService(typeServiceId), HttpStatus.OK);
+    public ResponseEntity<List<PatternStageDTO>> getStagesByTypeService(
+            @PathVariable Integer typeServiceId,
+            @RequestHeader("X-Company-Id") Long companyId
+    ) {
+        return new ResponseEntity<>(
+                patternStageService.getPatternStagesByTypeService(typeServiceId, companyId),
+                HttpStatus.OK
+        );
     }
 
     @PutMapping("/order")
-    public ResponseEntity<Void> updateExecutionOrder(@RequestBody List<PatternStageDTO> updatedStages) {
-        patternStageService.updateExecutionOrder(updatedStages);
+    public ResponseEntity<Void> updateExecutionOrder(@RequestBody List<PatternStageDTO> updatedStages,@RequestHeader("X-Company-Id") Long companyId) {
+        patternStageService.updateExecutionOrder(updatedStages,companyId);
         return ResponseEntity.ok().build();
     }
 }

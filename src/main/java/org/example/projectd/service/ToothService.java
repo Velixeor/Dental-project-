@@ -36,5 +36,13 @@ public class ToothService {
         List<Tooth> teeth = toothRepository.findByProjectId(projectId);
         return teeth.stream().map(ToothDTO::fromEntity).collect(Collectors.toList());
     }
+    public Tooth getByServiceId(Integer serviceId) {
+        return toothRepository.findByService_Id(serviceId);
+    }
+
+    public List<Tooth> getByProjectId(Integer projectId) {
+        return toothRepository.findByProjectId(projectId);
+    }
+
 
 }

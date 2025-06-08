@@ -8,18 +8,25 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.Map;
 
-@Service
+
 @RequiredArgsConstructor
+@Service
 @Slf4j
 public class UserSenderService {
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private static final String TARGET_URL = "http://other-microservice/api/users";//////////////////////////////////////////////
+    private static final String TARGET_URL = "http://localhost:8083/api/users"; // URL изменить при необходимости
 
     public Integer send(UserOutboxEvent event) {
-        Map<String, Object> payload = event.getPayload();
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("name", event.getName());
+        payload.put("mail", event.getEmail());
+        payload.put("password", event.getPassword());
+        payload.put("companyId", event.getCompanyId());
+        payload.put("roleId", event.getRoleId());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -39,7 +46,7 @@ public class UserSenderService {
 
         Integer userId = (Integer) response.getBody().get("id");
 
-        log.info("Пользователь создан. ID: {}, email: {}", userId, payload.get("email"));
+        log.info("Пользователь создан. ID: {}, email: {}", userId, event.getEmail());
         return userId;
     }
 }

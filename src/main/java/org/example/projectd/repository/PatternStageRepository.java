@@ -15,17 +15,20 @@ import java.util.List;
 @Repository
 public interface PatternStageRepository extends JpaRepository<PatternStage, Integer> {
     List<PatternStage> findByTypeService(TypeService typeService);
-    List<PatternStage> findByTypeServiceIdOrderByExecutionStepNumber(Integer typeServiceId);
+    List<PatternStage> findByTypeServiceIdAndCompanyIdOrderByExecutionStepNumber(Integer typeServiceId, Integer companyId);
     @Modifying
     @Query("UPDATE PatternStage ps SET ps.executionStepNumber = :number WHERE ps.id = :id")
     void updateExecutionStepNumber(@Param("id") Integer id, @Param("number") Integer number);
     @Modifying
     @Query(value = """
-    INSERT INTO project_designer.pattern_stage (base_stage_id, type_service_id, execution_step_number)
-    VALUES (:baseStageId, :typeServiceId, :executionStepNumber)
-    """, nativeQuery = true)
+    INSERT INTO project_designer.pattern_stage (base_stage_id, type_service_id, execution_step_number, company_id)
+    VALUES (:baseStageId, :typeServiceId, :executionStepNumber, :companyId)
+""", nativeQuery = true)
     void insertPatternStage(@Param("baseStageId") Integer baseStageId,
                             @Param("typeServiceId") Integer typeServiceId,
-                            @Param("executionStepNumber") Integer executionStepNumber);
+                            @Param("executionStepNumber") Integer executionStepNumber,
+                            @Param("companyId") Long companyId);
+
+    List<PatternStage> findByTypeServiceIdAndCompanyId(Integer typeServiceId, Integer companyId);
 
 }

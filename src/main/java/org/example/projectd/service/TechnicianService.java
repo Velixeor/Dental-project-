@@ -16,9 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @Slf4j
@@ -30,8 +28,8 @@ public class TechnicianService {
     private final TechnicianSkillService technicianSkillService;
     private final UserOutboxEventRepository userOutboxEventRepository;
 
-    public List<TechnicianDTO> getTechnician() {
-        return technicianRepository.findAll().stream()
+    public List<TechnicianDTO> getTechnician(Long companyId) {
+        return technicianRepository.findAllByCompanyId(companyId.intValue()).stream()
                 .map(TechnicianDTO::fromEntity)
                 .toList();
     }
@@ -43,26 +41,23 @@ public class TechnicianService {
     @Transactional
     public TechnicianDTO createTechnician(TechnicianCreateDTO technicianDTO, Long companyId) {
         Technician technician = saveTechnicianEntity(technicianDTO);
+        technician.setCompanyId(companyId.intValue());
         List<Skill> skills = fetchSkillsFromDTO(technicianDTO);
         List<TechnicianSkill> technicianSkills = technicianDTO.toTechnicianSkills(technician, skills);
         technicianSkillService.saveAllTechnicianSkills(technicianSkills);
-        saveUserOutboxEvent(technicianDTO, technician,companyId);
+        saveUserOutboxEvent(technicianDTO, technician, companyId);
         return TechnicianDTO.fromEntity(technician);
     }
 
-    private void saveUserOutboxEvent(TechnicianCreateDTO dto, Technician technician,Long companyID) {
-        Map<String, Object> payload = new HashMap<>();
-        payload.put("name", technician.getName());
-        payload.put("email", dto.mail());
-        payload.put("password", dto.password());
-
-        payload.put("companyId",companyID);
-        payload.put("roleId", 1);
-
+    private void saveUserOutboxEvent(TechnicianCreateDTO dto, Technician technician, Long companyID) {
         UserOutboxEvent event = UserOutboxEvent.builder()
                 .eventType("USER_CREATE")
-                .externalKey(String.valueOf(technician.getId()))
-                .payload(payload)
+                .externalKey(technician.getId().intValue())
+                .name(technician.getName())
+                .email(dto.mail())
+                .password(dto.password()) // Убедись, что пароль безопасно хранится!
+                .companyId(companyID.intValue())
+                .roleId(1)
                 .createdAt(LocalDateTime.now())
                 .build();
 

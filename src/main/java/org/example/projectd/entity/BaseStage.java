@@ -25,4 +25,7 @@ public class BaseStage {
 
     @Column(name = "comment")
     private String comment;
+
+    @Column(name = "company_id")
+    private Integer companyId;
 }

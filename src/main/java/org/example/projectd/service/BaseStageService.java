@@ -14,8 +14,8 @@ import java.util.List;
 public class BaseStageService {
     private final BaseStageRepository baseStageRepository;
 
-    public List<BaseStageDTO> getAllBaseStages() {
-        return baseStageRepository.findAll().stream()
+    public List<BaseStageDTO> getAllBaseStages(Long companyId) {
+        return baseStageRepository.findAllByCompanyIdOrCommon(companyId.intValue()).stream()
                 .map(BaseStageDTO::fromEntity)
                 .toList();
     }

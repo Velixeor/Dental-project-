@@ -25,8 +25,9 @@ public class StageController {
     }
 
     @GetMapping("/pending")
-    public ResponseEntity<List<StageDTO>> getPendingStages() {
-        List<StageDTO> pendingStages = stageService.getPendingStages();
+    public ResponseEntity<List<StageDTO>> getPendingStages(
+            @RequestHeader("X-Company-Id") String companyId) {
+        List<StageDTO> pendingStages = stageService.getPendingStages(Long.parseLong(companyId));
         return ResponseEntity.ok(pendingStages);
     }
 

@@ -30,4 +30,7 @@ public class Technician {
 
     private Integer userId;
 
+    @Column(name = "company_id")
+    private Integer companyId;
+
 }

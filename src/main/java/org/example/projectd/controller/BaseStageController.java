@@ -7,6 +7,7 @@ import org.example.projectd.service.BaseStageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,7 +21,8 @@ public class BaseStageController {
     private final BaseStageService baseStageService;
 
     @GetMapping("")
-    public ResponseEntity<List<BaseStageDTO>> getAllBaseStages() {
-        return new ResponseEntity<>(baseStageService.getAllBaseStages(), HttpStatus.OK);
+    public ResponseEntity<List<BaseStageDTO>> getAllBaseStages(
+            @RequestHeader("X-Company-Id") String companyId) {
+        return ResponseEntity.ok(baseStageService.getAllBaseStages(Long.parseLong(companyId)));
     }
 }

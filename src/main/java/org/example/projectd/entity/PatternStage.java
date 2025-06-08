@@ -30,4 +30,7 @@ public class PatternStage {
 
     @Column(name = "execution_step_number")
     private Integer executionStepNumber;
+
+    @Column(name = "company_id")
+    private Integer companyId;
 }

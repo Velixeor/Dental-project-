@@ -7,6 +7,7 @@ import org.example.projectd.service.JsonConverter;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.UUID;
 
 
 @Entity
@@ -26,11 +27,22 @@ public class UserOutboxEvent {
     private String eventType;
 
     @Column(name = "external_key", nullable = false)
-    private String externalKey;
+    private Integer externalKey;
 
-    @Column(name = "payload", nullable = false, columnDefinition = "jsonb")
-    @Convert(converter = JsonConverter.class)
-    private Map<String, Object> payload;
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "email", nullable = false)
+    private String email;
+
+    @Column(name = "password", nullable = false)
+    private String password;
+
+    @Column(name = "company_id", nullable = false)
+    private Integer companyId;
+
+    @Column(name = "role_id", nullable = false)
+    private Integer roleId;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();

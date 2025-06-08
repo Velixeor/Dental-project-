@@ -27,4 +27,7 @@ public class Customer {
 
     @Column(name = "address")
     private String address;
+
+    @Column(name = "company_id")
+    private Integer companyId;
 }

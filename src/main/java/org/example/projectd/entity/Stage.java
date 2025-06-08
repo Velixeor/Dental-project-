@@ -41,4 +41,5 @@ public class Stage {
 
     @Column(name = "execution_step_number")
     private Integer executionStepNumber;
+
 }

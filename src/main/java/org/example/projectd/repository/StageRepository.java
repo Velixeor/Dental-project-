@@ -4,6 +4,7 @@ package org.example.projectd.repository;
 import org.example.projectd.entity.Stage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -35,7 +36,11 @@ public interface StageRepository  extends JpaRepository<Stage, Integer> {
     @Query("""
     SELECT s
     FROM Stage s
-    WHERE s.sentForQualityControl = true AND s.confirmed = false
+    WHERE s.sentForQualityControl = true 
+      AND s.confirmed = false 
+      AND s.technician.companyId = :companyId
 """)
-    List<Stage> findPendingStages();
+    List<Stage> findPendingStagesByCompanyId(@Param("companyId") Long companyId);
+
+    List<Stage> findByService_Id(Integer service_id);
 }
